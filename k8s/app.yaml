@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: cloud-cost-optimization-agent
+  labels:
+    app: cloud-cost-optimization-agent
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloud-cost-optimization-agent
+  template:
+    metadata:
+      labels:
+        app: cloud-cost-optimization-agent
+    spec:
+      containers:
+        - name: api
+          image: cloud-cost-optimization-agent:local
+          ports:
+            - containerPort: 8080
+          readinessProbe:
+            httpGet:
+              path: /v1/readyz
+              port: 8080
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: cloud-cost-optimization-agent
+spec:
+  selector:
+    app: cloud-cost-optimization-agent
+  ports:
+    - port: 80
+      targetPort: 8080
